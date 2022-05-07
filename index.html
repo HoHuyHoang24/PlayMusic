@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music player</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/css/main.css">
+    <title> MP3 Music Play </title>
+</head>
+<body>
+    
+
+<div class="player">
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <!-- Header -->
+    <header>
+      <h4>Now playing:</h4>
+      <h2>String 57th & 9th</h2>
+    </header>
+
+    <!-- CD -->
+    <div class="cd">
+      <div class="cd-thumb" style="background-image: url('https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg')">
+      </div>
+    </div>
+
+    <!-- Control -->
+    <div class="control">
+      <div class="btn btn-repeat">
+        <i class="fas fa-redo"></i>
+      </div>
+      <div class="btn btn-prev">
+        <i class="fas fa-step-backward"></i>
+      </div>
+      <div class="btn btn-toggle-play">
+        <i class="fas fa-pause icon-pause"></i>
+        <i class="fas fa-play icon-play"></i>
+      </div>
+      <div class="btn btn-next">
+        <i class="fas fa-step-forward"></i>
+      </div>
+      <div class="btn btn-random">
+        <i class="fas fa-random"></i>
+      </div>
+    </div>
+
+    <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
+
+    <audio id="audio" src=""></audio>
+  </div>
+
+  <!-- Playlist -->
+  <div class="playlist">
+  
+  </div>
+</div>
+<script>
+const $ = document.querySelector.bind(document)
+const $$ = document.querySelectorAll.bind(document)
+const heading = $('header h2')
+const cdThumb = $('.cd-thumb')
+const audio = $('#audio')
+const playBtn = $('.btn-toggle-play')
+const player = $('.player')
+const progress = $('#progress')
+const nextBtn = $('.btn-next') 
+const prevBtn = $('.btn-prev') 
+const btnRandom= $('.btn-random')
+const repeatBtn= $('.btn-repeat')
+const playList = $('.playlist')
+
+const app= {
+  currentIndex: 0,
+  isPlaying: false,
+  isRandom: false,
+  songs: [
+  {
+    name: 'I Want You Remix',
+    singer: 'Hoàng đẹp trai hehe',
+    path: './assets/music/I Want You Remix - Noizy ft. Bred.mp4',
+    img: './assets/img/1b.jpg'
+  },{
+    name: 'John Legend - Ordinary People',
+    singer: 'DRAKE',
+    path: './assets/music/John Legend - Ordinary People.mp4',
+    img: './assets/img/b2.jpg'
+  },{
+    name: 'I’d Love to Change the World',
+    singer: 'Hoàng đẹp trai hehe',
+    path: './assets/music/Id Love to Change the World.mp4',
+    img: './assets/img/b3.jpg'
+  },{
+    name: 'i don’t wanna do this anymore',
+    singer: 'Hoàng đẹp trai hehe',
+    path: './assets/music/i don’t wanna do this anymore.mp4',
+    img: './assets/img/that-tinh.png'
+  },{
+    name: ' Buồn Không Thể Buông Piano ver',
+    singer: 'Hoàng đẹp trai hehe',
+    path: './assets/music/Buồn Không Thể Buông Piano ver.mp4',
+    img: './assets/img/b4.jpg'
+  }
+  ,{
+    name: ' PHARMACIST - OVERDO$E',
+    singer: 'Hoàng đẹp trai hehe',
+    path: './assets/music/PHARMACIST - OVERDO$E.mp4',
+    img: './assets/img/b5.jpg'
+  },{
+    name: ' Thousand Foot Krutch - Courtesy Call ',
+    singer: 'Thái Bủh Bruh',
+    path: './assets/music/Thousand Foot Krutch - Courtesy Call (Lyric Video).mp4',
+    img: './assets/img/b14.jpg'
+  },
+  {
+    name: ' better than me (sped up) ',
+    singer: 'Hữu Hùng',
+    path: './assets/music/better than me - q money (sped up).mp4',
+    img: './assets/img/b11.jpg'
+  },
+  {
+    name: ' The Weeknd - Can’t Feel My Face',
+    singer: 'Hồ Huy Hoàng',
+    path: './assets/music/The Weeknd - Cant Feel My Face (Official Video).mp4',
+    img: './assets/img/b7.jpg'
+  }, {
+    name: ' The Hills & Set Fire To The Rain ',
+    singer: 'Hồ Huy Hoàng',
+    path: './assets/music/The Weeknd & Adele - Set Fire To The Hills (The Hills & Set Fire To The Rain Mashup!).mp4',
+    img: './assets/img/3b.jpg'
+  },
+  {
+    name: ' Sau Chia Tay Ai Cũng Khác ',
+    singer: 'Trí thất tình',
+    path: './assets/music/Sau Chia Tay Ai Cũng Khác - T.R.I「Lyrics Video」Meens.mp4',
+    img: './assets/img/b6.jpg'
+  },
+  {
+    name: ' Em Có Còn Dùng Số Này Không - Thái Đinh ',
+    singer: 'Trí thất tình',
+    path: './assets/music/[Lyric Video] Em Có Còn Dùng Số Này Không - Thái Đinh.mp4',
+    img: './assets/img/b6.jpg'
+  },
+  {
+    name: ' Kent Jones - Don’t Mind (SICKICK VERSION) ',
+    singer: 'Hoàng đẹp trai và Hồ Huy Hoàng là 1 =))',
+    path: './assets/music/Kent Jones - Dont Mind (SICKICK VERSION).mp4',
+    img: './assets/img/2b.jpg'
+  },
+  {
+    name: ' All I Wanna Do - Jay Park [和訳] ',
+    singer: 'Thu Thảo uwu',
+    path: './assets/music/All I Wanna Do - Jay Park [和訳].mp4',
+    img: './assets/img/b9.jpg'
+  },
+  {
+    name: ' Midas the Jagaban - Party With a Jagaban (sped up) ',
+    singer: 'Thu Thảo uwu',
+    path: './assets/music/Midas the Jagaban - Party With a Jagaban (sped up).mp4',
+    img: './assets/img/b9.jpg'
+  },
+  {
+    name: ' Im Yours - Jason Mraz 🎵 ',
+    singer: 'Thu Thảo uwu',
+    path: './assets/music/Im Yours - Jason Mraz (Lyrics) 🎵.mp4',
+    img: './assets/img/b9.jpg'
+  },
+  {
+    name: ' Slowly (Raw ) - Thịnh Suy',
+    singer: 'Hồ Huy Hoàng',
+    path: './assets/music/Slowly (Raw ) - Thịnh Suy.mp4',
+    img: './assets/img/4b.jpg'
+  },
+  {
+    name: ' Gangsta’s Paradise ',
+    singer: 'Kiệt Bủh Đảk',
+    path: './assets/music/Coolio - Gangstas Paradise (feat. L.V.) [Official Music Video].mp4',
+    img: './assets/img/b10.jpg'
+  },
+  {
+    name: ' Cyberpunk 2077 music ',
+    singer: 'Kiệt Bủh Đảk',
+    path: './assets/music/Cyberpunk 2077 music.mp4',
+    img: './assets/img/b10.jpg'
+  },
+  {
+    name: ' Driver Forever_Supreme BG ',
+    singer: 'Kiệt Bủh Đảk',
+    path: './assets/music/Driver Forever_Supreme BG.mp4',
+    img: './assets/img/b10.jpg'
+  },
+  {
+    name: 'wünsche - sunday vibes ',
+    singer: 'Hồ Huy Hoàng',
+    path: './assets/music/wünsche - sunday vibes.mp4',
+    img: './assets/img/1b.jpg'
+  },
+  {
+    name: 'Echos - Vacant ',
+    singer: 'Hồ Huy Hoàng',
+    path: './assets/music/Echos - Vacant.mp4',
+    img: './assets/img/1b.jpg'
+  },
+],
+  render: function(){
+    const htmls = this.songs.map((song,index) => {
+      return `
+      <div class="song ${index === this.currentIndex ? 'active':''} " data-index="${index}">
+        <div class="thumb" style="background-image: url('${song.img}')">
+          </div>
+          <div class="body">
+            <h3 class="title">${song.name}</h3>
+            <p class="author">${song.singer}</p>
+          </div>
+          <div class="option">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+      </div>
+      `
+    })
+    $('.playlist').innerHTML = htmls.join('')
+  },
+  defineProperties: function(){
+    Object.defineProperty(this, 'currenSong',{
+      get: function(){
+        return this.songs[this.currentIndex]
+      }
+    })
+  },
+  handleEvents: function(){
+    const cd = $('.cd')
+    const cdWidth = cd.offsetWidth
+    const _this = this
+    
+    const cdThumbAnimate = cdThumb.animate([
+      {transform:'rotate(360deg)'}
+    ],{
+      duration: 10000,
+      iterations: Infinity
+    })
+    cdThumbAnimate.pause()
+    
+    // zoom in , zoom out
+    document.onscroll = function(){
+    const scrollTop = window.scrollY
+    const newCdWidth = cdWidth - scrollTop
+    cd.style.width = newCdWidth > 0 ? newCdWidth + 'px': 0
+    cd.style.opacity = newCdWidth/cdWidth
+    }
+    // play songs
+    playBtn.onclick = function(){
+      
+      if (_this.isPlaying){
+        _this.isPlaying=false
+        audio.pause()
+        player.classList.remove('playing')
+        cdThumbAnimate.pause()
+
+      }else{
+        _this.isPlaying=true
+        audio.play()
+        player.classList.add('playing')
+        cdThumbAnimate.play()
+
+      }
+      //
+      audio.onplay = function () {
+      _this.isPlaying = true;
+      player.classList.add("playing");
+      cdThumbAnimate.play();
+    };
+      audio.ontimeupdate = function(){
+        if (audio.duration){
+          const progressCurrentTime = Math.floor(audio.currentTime/audio.duration*100)
+          progress.value = progressCurrentTime
+        }
+        progress.onchange = function(e){
+          const seekTime = audio.duration/100 * e.target.value
+          audio.currentTime = seekTime
+        }
+      }
+      //nextSong
+      nextBtn.onclick = function(){
+        if (_this.isRandom){
+          _this.playRandomSong()
+        } else {
+          _this.nextSong()
+        }
+        audio.play()
+        _this.render()
+        _this.scrollToActiveSong()
+
+      }
+      prevBtn.onclick = function(){
+        if (_this.isRandom){
+          _this.playRandomSong()
+        } else {
+          _this.prevSong()
+        }
+        audio.play()
+        _this.render()
+        _this.scrollToActiveSong()
+      }
+      //random song
+      btnRandom.onclick = function (e) {
+      _this.isRandom = !_this.isRandom;
+      // _this.setConfig("isRandom", _this.isRandom);
+      btnRandom.classList.toggle("active", _this.isRandom);
+    };
+      
+      //repeat only
+      repeatBtn.onclick = function (e) {
+      _this.isRepeat = !_this.isRepeat;
+      // _this.setConfig("isRepeat", _this.isRepeat);
+      repeatBtn.classList.toggle("active", _this.isRepeat);
+    };
+      audio.onended = function(){
+        if(_this.isRepeat){
+          audio.play()
+        } else {
+          nextBtn.click()
+        }
+      }
+      // 
+      playList.onclick = function(e){
+        const songNode= e.target.closest(".song:not(.active)")
+
+        if (songNode || e.target.closest(".option")) {
+          //click song
+          if (songNode) {
+          _this.currentIndex = Number(songNode.dataset.index);
+          _this.loadCurrentSong();
+          _this.render();
+          audio.play();
+         }
+          if (e.target.closest(".option")){
+            
+          }
+        }
+      }
+    }
+  },
+
+  scrollToActiveSong(){
+    setTimeout(()=> {
+      $('.song.active').scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      })
+    },300)
+  },
+  loadCurrentSong: function(){
+  
+    heading.textContent = this.currenSong.name
+    cdThumb.style.backgroundImage = `url('${this.currenSong.img}')`
+    audio.src = this.currenSong.path
+    console.log(heading,cdThumb,audio)
+  },
+  nextSong: function(){
+      this.currentIndex++
+      if (this.currentIndex >= this.songs.length) {
+        this.currentIndex=0
+      }
+      this.loadCurrentSong()
+  },
+  prevSong: function(){
+      this.currentIndex--
+      if (this.currentIndex < 0) {
+        this.currentIndex= this.songs.length-1
+      }
+      this.loadCurrentSong()
+  },
+  playRandomSong: function(){
+    let newIndex 
+    do {
+      newIndex =Math.floor(Math.random() * this.songs.length)
+    } while (newIndex === this.currentIndex)
+    this.currentIndex=newIndex
+    this.loadCurrentSong()
+  },
+  start: function(){
+    this.defineProperties()
+    this.handleEvents()
+    this.loadCurrentSong()
+    this.render()
+  }
+}
+app.start()
+</script>
+</body>
+</html>
